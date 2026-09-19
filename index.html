@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренажер множення та ділення дробів</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+        .progress-bar {
+            background: #eef2f7;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e6ed;
+        }
+        .progress-text {
+            font-weight: 600;
+            color: #5a6a7a;
+        }
+        .progress-track {
+            flex: 1;
+            height: 10px;
+            background: #dce3ec;
+            border-radius: 5px;
+            margin: 0 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 5px;
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+        .score {
+            font-weight: 700;
+            color: #27ae60;
+        }
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 0;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        .trainer-section {
+            padding: 30px;
+        }
+        .problem-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 25px;
+            border: 2px solid #e8eef5;
+        }
+        .problem-label {
+            font-size: 0.9rem;
+            color: #7a8a9a;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .problem-display {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 20px 0;
+            line-height: 1.4;
+        }
+        .fraction {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+            margin: 0 4px;
+        }
+        .fraction .num {
+            display: block;
+            border-bottom: 2px solid #2c3e50;
+            padding: 0 8px 2px;
+            min-width: 30px;
+        }
+        .fraction .den {
+            display: block;
+            padding: 2px 8px 0;
+        }
+        .operator {
+            font-size: 1.8rem;
+            margin: 0 10px;
+            vertical-align: middle;
+        }
+        .equals {
+            font-size: 1.8rem;
+            margin: 0 10px;
+        }
+        .level-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        .level-sufficient {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .level-high {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        .answer-section {
+            margin-bottom: 25px;
+        }
+        .answer-section label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #5a6a7a;
+        }
+        .answer-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        #answerInput {
+            flex: 1;
+            padding: 14px 18px;
+            font-size: 1.3rem;
+            border: 2px solid #d0d8e4;
+            border-radius: 12px;
+            outline: none;
+            transition: border-color 0.2s;
+            text-align: center;
+            font-weight: 600;
+        }
+        #answerInput:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.15);
+        }
+        #answerInput.correct {
+            border-color: #27ae60;
+            background: #e8f8f0;
+        }
+        #answerInput.incorrect {
+            border-color: #e74c3c;
+            background: #fdf0ef;
+        }
+        .btn {
+            padding: 12px 22px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn:active {
+            transform: scale(0.97);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+        }
+        .btn-secondary {
+            background: #eef2f7;
+            color: #5a6a7a;
+        }
+        .btn-secondary:hover {
+            background: #e0e6ed;
+        }
+        .btn-hint {
+            background: #fff8e1;
+            color: #f57c00;
+        }
+        .btn-hint:hover {
+            background: #ffecb3;
+        }
+        .btn-skip {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+        .btn-skip:hover {
+            background: #f8bbd9;
+        }
+        .btn-next {
+            background: linear-gradient(135deg, #26a69a, #00897b);
+            color: white;
+        }
+        .btn-next:hover {
+            box-shadow: 0 4px 15px rgba(38,166,154,0.4);
+        }
+        .buttons-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .feedback {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            display: none;
+        }
+        .feedback.correct {
+            background: #e8f8f0;
+            color: #1b7a4a;
+            border: 1px solid #a5d6a7;
+            display: block;
+        }
+        .feedback.incorrect {
+            background: #fdf0ef;
+            color: #c0392b;
+            border: 1px solid #ef9a9a;
+            display: block;
+        }
+        .feedback.hint {
+            background: #fff8e1;
+            color: #e65100;
+            border: 1px solid #ffe082;
+            display: block;
+        }
+        .hint-content {
+            text-align: left;
+            line-height: 1.6;
+        }
+        .hint-content ol {
+            margin: 10px 0 0 20px;
+        }
+        .calculator-section {
+            background: #f0f4f8;
+            padding: 25px 20px;
+            border-left: 1px solid #e0e6ed;
+        }
+        @media (max-width: 768px) {
+            .calculator-section {
+                border-left: none;
+                border-top: 1px solid #e0e6ed;
+            }
+        }
+        .calc-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #5a6a7a;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .calc-display {
+            background: #1a2332;
+            color: #00e676;
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: right;
+            margin-bottom: 15px;
+            min-height: 55px;
+            word-break: break-all;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .calc-btn {
+            padding: 16px 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: 0 3px 0 #b0b8c4;
+            color: #2c3e50;
+        }
+        .calc-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #b0b8c4;
+        }
+        .calc-btn.num {
+            background: #ffffff;
+        }
+        .calc-btn.num:hover {
+            background: #f0f4f8;
+        }
+        .calc-btn.op {
+            background: #ffe0b2;
+            color: #e65100;
+            box-shadow: 0 3px 0 #ffb74d;
+        }
+        .calc-btn.op:hover {
+            background: #ffcc80;
+        }
+        .calc-btn.func {
+            background: #c5cae9;
+            color: #283593;
+            box-shadow: 0 3px 0 #9fa8da;
+        }
+        .calc-btn.func:hover {
+            background: #9fa8da;
+        }
+        .calc-btn.equals {
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            color: white;
+            box-shadow: 0 3px 0 #2e7d32;
+            grid-column: span 2;
+        }
+        .calc-btn.equals:hover {
+            background: linear-gradient(135deg, #81c784, #66bb6a);
+        }
+        .calc-btn.clear {
+            background: #ef9a9a;
+            color: #b71c1c;
+            box-shadow: 0 3px 0 #e57373;
+        }
+        .calc-btn.clear:hover {
+            background: #e57373;
+        }
+        .calc-btn.transfer {
+            background: linear-gradient(135deg, #42a5f5, #1e88e5);
+            color: white;
+            box-shadow: 0 3px 0 #1565c0;
+            grid-column: span 2;
+        }
+        .calc-btn.transfer:hover {
+            background: linear-gradient(135deg, #64b5f6, #42a5f5);
+        }
+        .calc-hint {
+            font-size: 0.8rem;
+            color: #7a8a9a;
+            text-align: center;
+            margin-top: 12px;
+            line-height: 1.4;
+        }
+        .results-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .results-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .results-card h2 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        .results-score {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #667eea;
+            margin: 20px 0;
+        }
+        .results-details {
+            color: #5a6a7a;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        footer {
+            text-align: center;
+            padding: 15px;
+            color: #7a8a9a;
+            font-size: 0.85rem;
+            background: #f8fafc;
+            border-top: 1px solid #e0e6ed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📐 Тренажер множення та ділення дробів</h1>
+            <p>Достатній та високий рівень складності • 20 прикладів</p>
+        </header>
+
+        <div class="progress-bar">
+            <span class="progress-text">Приклад <span id="currentNum">1</span> з 20</span>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="score">✓ <span id="score">0</span></span>
+        </div>
+
+        <div class="main-content">
+            <div class="trainer-section">
+                <div class="problem-card">
+                    <div class="problem-label">Обчисліть</div>
+                    <div class="problem-display" id="problemDisplay">
+                        <!-- Problem will be rendered here -->
+                    </div>
+                    <span class="level-badge" id="levelBadge">Достатній рівень</span>
+                </div>
+
+                <div class="answer-section">
+                    <label for="answerInput">Ваша відповідь (у вигляді дробу, напр. 3/4 або 5):</label>
+                    <div class="answer-input-wrapper">
+                        <input type="text" id="answerInput" placeholder="Введіть відповідь..." autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="buttons-row">
+                    <button class="btn btn-primary" id="checkBtn" onclick="checkAnswer()">✓ Перевірити</button>
+                    <button class="btn btn-hint" id="hintBtn" onclick="showHint()">💡 Підказка</button>
+                    <button class="btn btn-skip" id="skipBtn" onclick="skipTask()">⏭ Пропустити</button>
+                    <button class="btn btn-next" id="nextBtn" onclick="nextTask()" style="display:none;">→ Наступне</button>
+                </div>
+
+                <div class="feedback" id="feedback"></div>
+            </div>
+
+            <div class="calculator-section">
+                <div class="calc-title">🔢 Онлайн-калькулятор</div>
+                <div class="calc-display" id="calcDisplay">0</div>
+                <div class="calc-grid">
+                    <button class="calc-btn clear" onclick="calcClear()">C</button>
+                    <button class="calc-btn func" onclick="calcInput('/')">/</button>
+                    <button class="calc-btn func" onclick="calcBackspace()">⌫</button>
+                    <button class="calc-btn op" onclick="calcInput('*')">×</button>
+
+                    <button class="calc-btn num" onclick="calcInput('7')">7</button>
+                    <button class="calc-btn num" onclick="calcInput('8')">8</button>
+                    <button class="calc-btn num" onclick="calcInput('9')">9</button>
+                    <button class="calc-btn op" onclick="calcInput('-')">−</button>
+
+                    <button class="calc-btn num" onclick="calcInput('4')">4</button>
+                    <button class="calc-btn num" onclick="calcInput('5')">5</button>
+                    <button class="calc-btn num" onclick="calcInput('6')">6</button>
+                    <button class="calc-btn op" onclick="calcInput('+')">+</button>
+
+                    <button class="calc-btn num" onclick="calcInput('1')">1</button>
+                    <button class="calc-btn num" onclick="calcInput('2')">2</button>
+                    <button class="calc-btn num" onclick="calcInput('3')">3</button>
+                    <button class="calc-btn equals" onclick="calcEquals()">=</button>
+
+                    <button class="calc-btn num" onclick="calcInput('0')" style="grid-column: span 2;">0</button>
+                    <button class="calc-btn transfer" onclick="transferToAnswer()">→ У відповідь</button>
+                </div>
+                <p class="calc-hint">Вводьте числа та операції.<br>Натисніть «→ У відповідь» щоб перенести результат у поле відповіді.<br>Дані також автоматично синхронізуються.</p>
+            </div>
+        </div>
+
+        <footer>
+            Тренажер для учнів 5–6 класів • Множення та ділення дробів
+        </footer>
+    </div>
+
+    <div class="results-overlay" id="resultsOverlay">
+        <div class="results-card">
+            <h2>🎉 Тренування завершено!</h2>
+            <div class="results-score"><span id="finalScore">0</span>/20</div>
+            <div class="results-details" id="resultsDetails"></div>
+            <button class="btn btn-primary" onclick="restart()">🔄 Почати знову</button>
+        </div>
+    </div>
+
+    <script>
+        // ===== 20 ПРИКЛАДІВ (достатній + високий рівень) =====
+        const problems = [
+            // Достатній рівень (1-10)
+            { a: [2, 3], op: '×', b: [3, 4], answer: [1, 2], level: 'sufficient', hint: 'Множимо чисельники і знаменники: (2×3)/(3×4) = 6/12. Скорочуємо на 6 → 1/2.' },
+            { a: [1, 5], op: '×', b: [2, 3], answer: [2, 15], level: 'sufficient', hint: 'Множимо: (1×2)/(5×3) = 2/15. Дріб уже нескоротний.' },
+            { a: [3, 4], op: '×', b: [4, 5], answer: [3, 5], level: 'sufficient', hint: 'Множимо: (3×4)/(4×5) = 12/20. Скорочуємо на 4 → 3/5.' },
+            { a: [5, 6], op: '×', b: [2, 5], answer: [1, 3], level: 'sufficient', hint: 'Множимо: (5×2)/(6×5) = 10/30. Скорочуємо на 10 → 1/3.' },
+            { a: [1, 2], op: '÷', b: [1, 4], answer: [2, 1], level: 'sufficient', hint: 'Ділення = множення на обернений: 1/2 × 4/1 = 4/2 = 2.' },
+            { a: [3, 5], op: '÷', b: [1, 2], answer: [6, 5], level: 'sufficient', hint: '3/5 ÷ 1/2 = 3/5 × 2/1 = 6/5.' },
+            { a: [2, 7], op: '×', b: [7, 8], answer: [1, 4], level: 'sufficient', hint: '(2×7)/(7×8) = 14/56. Скорочуємо на 14 → 1/4.' },
+            { a: [4, 9], op: '÷', b: [2, 3], answer: [2, 3], level: 'sufficient', hint: '4/9 ÷ 2/3 = 4/9 × 3/2 = 12/18 = 2/3.' },
+            { a: [5, 8], op: '×', b: [4, 5], answer: [1, 2], level: 'sufficient', hint: '(5×4)/(8×5) = 20/40 = 1/2.' },
+            { a: [1, 3], op: '÷', b: [1, 6], answer: [2, 1], level: 'sufficient', hint: '1/3 ÷ 1/6 = 1/3 × 6/1 = 6/3 = 2.' },
+
+            // Високий рівень (11-20)
+            { a: [5, 6], op: '×', b: [9, 10], answer: [3, 4], level: 'high', hint: '(5×9)/(6×10) = 45/60. Скорочуємо на 15 → 3/4.' },
+            { a: [7, 8], op: '÷', b: [3, 4], answer: [7, 6], level: 'high', hint: '7/8 ÷ 3/4 = 7/8 × 4/3 = 28/24 = 7/6.' },
+            { a: [3, 7], op: '×', b: [14, 9], answer: [2, 3], level: 'high', hint: '(3×14)/(7×9) = 42/63. Скорочуємо на 21 → 2/3.' },
+            { a: [5, 12], op: '÷', b: [5, 6], answer: [1, 2], level: 'high', hint: '5/12 ÷ 5/6 = 5/12 × 6/5 = 30/60 = 1/2.' },
+            { a: [8, 9], op: '×', b: [3, 4], answer: [2, 3], level: 'high', hint: '(8×3)/(9×4) = 24/36. Скорочуємо на 12 → 2/3.' },
+            { a: [7, 10], op: '÷', b: [14, 15], answer: [3, 4], level: 'high', hint: '7/10 ÷ 14/15 = 7/10 × 15/14 = 105/140. Скорочуємо на 35 → 3/4.' },
+            { a: [9, 14], op: '×', b: [7, 15], answer: [3, 10], level: 'high', hint: '(9×7)/(14×15) = 63/210. Скорочуємо на 21 → 3/10.' },
+            { a: [4, 5], op: '÷', b: [8, 15], answer: [3, 2], level: 'high', hint: '4/5 ÷ 8/15 = 4/5 × 15/8 = 60/40 = 3/2.' },
+            { a: [11, 12], op: '×', b: [9, 22], answer: [3, 8], level: 'high', hint: '(11×9)/(12×22) = 99/264. Скорочуємо на 33 → 3/8.' },
+            { a: [5, 9], op: '÷', b: [10, 27], answer: [3, 2], level: 'high', hint: '5/9 ÷ 10/27 = 5/9 × 27/10 = 135/90 = 3/2.' }
+        ];
+
+        let currentIndex = 0;
+        let score = 0;
+        let answered = false;
+        let skipped = [];
+        let calcValue = '0';
+        let calcJustEquals = false;
+
+        // НСД
+        function gcd(a, b) {
+            a = Math.abs(a); b = Math.abs(b);
+            while (b) { let t = b; b = a % b; a = t; }
+            return a;
+        }
+
+        function simplify(num, den) {
+            if (den === 0) return [num, den];
+            if (num === 0) return [0, 1];
+            const g = gcd(num, den);
+            let n = num / g;
+            let d = den / g;
+            if (d < 0) { n = -n; d = -d; }
+            return [n, d];
+        }
+
+        function parseFraction(str) {
+            str = str.trim().replace(/\s+/g, '');
+            if (!str) return null;
+            // Ціле число
+            if (/^-?\d+$/.test(str)) {
+                return [parseInt(str, 10), 1];
+            }
+            // Дріб a/b
+            const m = str.match(/^(-?\d+)\/(-?\d+)$/);
+            if (m) {
+                const num = parseInt(m[1], 10);
+                const den = parseInt(m[2], 10);
+                if (den === 0) return null;
+                return simplify(num, den);
+            }
+            // Змішане число a b/c
+            const mixed = str.match(/^(-?\d+)\s+(\d+)\/(\d+)$/);
+            if (mixed) {
+                let whole = parseInt(mixed[1], 10);
+                let num = parseInt(mixed[2], 10);
+                let den = parseInt(mixed[3], 10);
+                if (den === 0) return null;
+                if (whole < 0) num = -num;
+                return simplify(whole * den + num, den);
+            }
+            return null;
+        }
+
+        function fractionsEqual(f1, f2) {
+            if (!f1 || !f2) return false;
+            const s1 = simplify(f1[0], f1[1]);
+            const s2 = simplify(f2[0], f2[1]);
+            return s1[0] === s2[0] && s1[1] === s2[1];
+        }
+
+        function formatFraction(f) {
+            if (f[1] === 1) return String(f[0]);
+            if (Math.abs(f[0]) > f[1] && f[1] !== 0) {
+                const whole = Math.trunc(f[0] / f[1]);
+                const rem = Math.abs(f[0] % f[1]);
+                if (rem === 0) return String(whole);
+                return whole + ' ' + rem + '/' + f[1];
+            }
+            return f[0] + '/' + f[1];
+        }
+
+        function renderFraction(num, den) {
+            return `<span class="fraction"><span class="num">${num}</span><span class="den">${den}</span></span>`;
+        }
+
+        function loadProblem() {
+            if (currentIndex >= problems.length) {
+                showResults();
+                return;
+            }
+            const p = problems[currentIndex];
+            answered = false;
+
+            const display = document.getElementById('problemDisplay');
+            const opSymbol = p.op === '×' ? '×' : '÷';
+            display.innerHTML = 
+                renderFraction(p.a[0], p.a[1]) +
+                `<span class="operator">${opSymbol}</span>` +
+                renderFraction(p.b[0], p.b[1]) +
+                `<span class="equals">=</span> ?`;
+
+            const badge = document.getElementById('levelBadge');
+            if (p.level === 'sufficient') {
+                badge.textContent = 'Достатній рівень';
+                badge.className = 'level-badge level-sufficient';
+            } else {
+                badge.textContent = 'Високий рівень';
+                badge.className = 'level-badge level-high';
+            }
+
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            document.getElementById('progressFill').style.width = ((currentIndex) / 20 * 100) + '%';
+            document.getElementById('answerInput').value = '';
+            document.getElementById('answerInput').className = '';
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('checkBtn').style.display = 'inline-flex';
+            document.getElementById('hintBtn').style.display = 'inline-flex';
+            document.getElementById('skipBtn').style.display = 'inline-flex';
+            document.getElementById('nextBtn').style.display = 'none';
+
+            calcClear();
+        }
+
+        function checkAnswer() {
+            if (answered) return;
+            const input = document.getElementById('answerInput').value;
+            const userFrac = parseFraction(input);
+            const p = problems[currentIndex];
+            const feedback = document.getElementById('feedback');
+            const inputEl = document.getElementById('answerInput');
+
+            if (!userFrac) {
+                feedback.className = 'feedback incorrect';
+                feedback.innerHTML = '⚠️ Введіть відповідь у вигляді дробу (наприклад, 3/4) або цілого числа.';
+                feedback.style.display = 'block';
+                return;
+            }
+
+            if (fractionsEqual(userFrac, p.answer)) {
+                answered = true;
+                score++;
+                document.getElementById('score').textContent = score;
+                inputEl.className = 'correct';
+                feedback.className = 'feedback correct';
+                feedback.innerHTML = '✅ Правильно! Відповідь: <strong>' + formatFraction(p.answer) + '</strong>';
+                feedback.style.display = 'block';
+                document.getElementById('checkBtn').style.display = 'none';
+                document.getElementById('hintBtn').style.display = 'none';
+                document.getElementById('skipBtn').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'inline-flex';
+            } else {
+                inputEl.className = 'incorrect';
+                feedback.className = 'feedback incorrect';
+                feedback.innerHTML = '❌ Неправильно. Спробуйте ще раз або скористайтеся підказкою.';
+                feedback.style.display = 'block';
+            }
+        }
+
+        function showHint() {
+            const p = problems[currentIndex];
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback hint';
+            feedback.innerHTML = '<div class="hint-content"><strong>💡 Підказка:</strong><br>' + p.hint + '</div>';
+            feedback.style.display = 'block';
+        }
+
+        function skipTask() {
+            skipped.push(currentIndex);
+            answered = true;
+            document.getElementById('checkBtn').style.display = 'none';
+            document.getElementById('hintBtn').style.display = 'none';
+            document.getElementById('skipBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'inline-flex';
+            const p = problems[currentIndex];
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback hint';
+            feedback.innerHTML = '⏭ Завдання пропущено. Правильна відповідь: <strong>' + formatFraction(p.answer) + '</strong>';
+            feedback.style.display = 'block';
+        }
+
+        function nextTask() {
+            currentIndex++;
+            loadProblem();
+        }
+
+        function showResults() {
+            document.getElementById('progressFill').style.width = '100%';
+            document.getElementById('resultsOverlay').style.display = 'flex';
+            document.getElementById('finalScore').textContent = score;
+            let msg = '';
+            if (score === 20) msg = 'Ідеально! Ви чудово володієте множенням і діленням дробів! 🌟';
+            else if (score >= 16) msg = 'Відмінний результат! Трохи практики — і буде ідеально.';
+            else if (score >= 12) msg = 'Добре! Рекомендуємо ще раз повторити складніші приклади.';
+            else msg = 'Потрібно більше практики. Спробуйте ще раз — у вас обов\'язково вийде!';
+            if (skipped.length > 0) {
+                msg += '<br><br>Пропущено завдань: ' + skipped.length;
+            }
+            document.getElementById('resultsDetails').innerHTML = msg;
+        }
+
+        function restart() {
+            currentIndex = 0;
+            score = 0;
+            skipped = [];
+            document.getElementById('score').textContent = '0';
+            document.getElementById('resultsOverlay').style.display = 'none';
+            loadProblem();
+        }
+
+        // ===== КАЛЬКУЛЯТОР =====
+        function updateCalcDisplay() {
+            document.getElementById('calcDisplay').textContent = calcValue || '0';
+            // Автоматичне перенесення в поле відповіді
+            syncToAnswer();
+        }
+
+        function syncToAnswer() {
+            // Автоматично переносимо значення калькулятора в поле відповіді,
+            // якщо воно виглядає як дріб або число
+            const val = calcValue.trim();
+            if (val && val !== '0' && val !== 'Помилка') {
+                // Якщо є лише одне число або дріб — переносимо
+                if (/^-?\d+(\/\d+)?$/.test(val) || /^-?\d+\s+\d+\/\d+$/.test(val)) {
+                    document.getElementById('answerInput').value = val;
+                }
+            }
+        }
+
+        function calcInput(char) {
+            if (calcJustEquals) {
+                if ('+-*/'.includes(char)) {
+                    // продовжуємо з результатом
+                } else {
+                    calcValue = '';
+                }
+                calcJustEquals = false;
+            }
+            if (calcValue === '0' && char !== '.' && char !== '/') {
+                calcValue = char;
+            } else if (calcValue === 'Помилка') {
+                calcValue = char;
+            } else {
+                calcValue += char;
+            }
+            updateCalcDisplay();
+        }
+
+        function calcClear() {
+            calcValue = '0';
+            calcJustEquals = false;
+            updateCalcDisplay();
+        }
+
+        function calcBackspace() {
+            if (calcJustEquals) {
+                calcClear();
+                return;
+            }
+            if (calcValue.length <= 1) {
+                calcValue = '0';
+            } else {
+                calcValue = calcValue.slice(0, -1);
+            }
+            updateCalcDisplay();
+        }
+
+        function calcEquals() {
+            try {
+                // Замінюємо символи для eval
+                let expr = calcValue.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+                // Підтримка простих дробів: 3/4 * 2/5
+                // Простий парсер для ланцюжків типу a/b * c/d
+                const result = evaluateFractionExpr(expr);
+                if (result !== null) {
+                    calcValue = formatFraction(result);
+                } else {
+                    // fallback на звичайний eval (для простих виразів)
+                    const numResult = Function('"use strict"; return (' + expr + ')')();
+                    if (typeof numResult === 'number' && isFinite(numResult)) {
+                        if (Number.isInteger(numResult)) {
+                            calcValue = String(numResult);
+                        } else {
+                            // Спробуємо представити як дріб
+                            calcValue = decimalToFraction(numResult);
+                        }
+                    } else {
+                        calcValue = 'Помилка';
+                    }
+                }
+            } catch (e) {
+                calcValue = 'Помилка';
+            }
+            calcJustEquals = true;
+            updateCalcDisplay();
+        }
+
+        function evaluateFractionExpr(expr) {
+            // Підтримка: a/b * c/d, a/b / c/d, a/b + c/d тощо
+            // Розбиваємо на токени
+            const tokens = expr.match(/-?\d+\/\d+|-?\d+|[+\-*/]/g);
+            if (!tokens || tokens.length === 0) return null;
+
+            function toFrac(t) {
+                if (t.includes('/')) {
+                    const [n, d] = t.split('/').map(Number);
+                    return [n, d];
+                }
+                return [Number(t), 1];
+            }
+
+            let result = toFrac(tokens[0]);
+            for (let i = 1; i < tokens.length; i += 2) {
+                const op = tokens[i];
+                const next = toFrac(tokens[i + 1]);
+                if (op === '*') {
+                    result = simplify(result[0] * next[0], result[1] * next[1]);
+                } else if (op === '/') {
+                    result = simplify(result[0] * next[1], result[1] * next[0]);
+                } else if (op === '+') {
+                    result = simplify(result[0] * next[1] + next[0] * result[1], result[1] * next[1]);
+                } else if (op === '-') {
+                    result = simplify(result[0] * next[1] - next[0] * result[1], result[1] * next[1]);
+                } else {
+                    return null;
+                }
+            }
+            return result;
+        }
+
+        function decimalToFraction(x, tolerance = 1.0E-6) {
+            let h1 = 1, h2 = 0, k1 = 0, k2 = 1, b = x;
+            do {
+                let a = Math.floor(b);
+                let aux = h1; h1 = a * h1 + h2; h2 = aux;
+                aux = k1; k1 = a * k1 + k2; k2 = aux;
+                b = 1 / (b - a);
+            } while (Math.abs(x - h1 / k1) > x * tolerance);
+            return formatFraction(simplify(h1, k1));
+        }
+
+        function transferToAnswer() {
+            const val = calcValue;
+            if (val && val !== 'Помилка') {
+                document.getElementById('answerInput').value = val;
+                document.getElementById('answerInput').focus();
+            }
+        }
+
+        // Enter для перевірки
+        document.getElementById('answerInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                if (!answered) checkAnswer();
+                else nextTask();
+            }
+        });
+
+        // Старт
+        loadProblem();
+    </script>
+</body>
+</html>
